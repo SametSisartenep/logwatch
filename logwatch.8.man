@@ -1,0 +1,41 @@
+.TH LOGWATCH 8
+.SH NAME
+logwatch \- log file stalker
+.SH SYNOPSIS
+.PP
+.B logwatch
+[
+.B -d
+] [
+.B -t
+.I perc
+]
+.I logfile
+.SH DESCRIPTION
+.I logwatch
+uses
+.I inotify (7)
+watches to monitor changes in a specific
+.IR logfile .
+It also monitors its parent directory, so it can track local movements (e.g. log rotations).
+If the
+.I logfile
+exceeds an established disk quota, it is truncated to half its size, keeping the latest data.
+.PP
+The flags are:
+.TP
+.B d
+Enable debugging output.
+.TP
+.B t
+Sets a percentage
+.I perc
+for the disk usage threshold the file cannot exceed. The available quota is 100\-perc%.
+By default the threshold is set to 5%.
+.SH SEE ALSO
+.IR inotify (7),
+.IR logrotate (8).
+.SH BUGS
+The heuristics used to clamp the file are faulty, if the disk is already filled to the threshold, the program assumes it's the log file's fault and truncates it.
+.br
+Slicing the file in half isn't necessarily the best approach. More disk usage statistics are needed to make an informed decision.
